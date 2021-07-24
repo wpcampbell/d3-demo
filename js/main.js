@@ -81,6 +81,42 @@ var cityPop = [
         population: 27244
     }
 ];
+
+//Example 3.1: x coordinate linear scale
+var x = d3.scaleLinear()  //create the scale
+        .range([90, 810]) //output min and max
+        .domain([0, 3]); //input min and max
+
+var minPop = d3.min(cityPop, function(d){
+            return d.population;
+        });
+    
+//find the maximum value of the array
+var maxPop = d3.max(cityPop, function(d){
+    return d.population;
+});
+
+ //color scale generator 
+ var color = d3.scaleLinear()
+ .range([
+     "#FDBE85",
+     "#D94701"
+ ])
+ .domain([
+     minPop, 
+     maxPop
+ ]);
+
+//scale for circles center y coordinate
+var y = d3.scaleLinear()
+    .range([440, 95])
+    .domain([
+    minPop,
+     maxPop
+]);
+
+
+
 //ex 2.8 using the cityPop array to create circles
 var circles = container.selectAll(".circles") //create an empty selection
         .data(cityPop) //here we feed in an array
@@ -96,12 +132,11 @@ var circles = container.selectAll(".circles") //create an empty selection
             return Math.sqrt(area/Math.PI);
         })
         .attr("cx", function(d, i){
-            //use the index to place each circle horizontally
-            return 90 + (i * 180);
+            //use the scale generator with the index to place each circle horizontally
+            return x(i);
         })
-        .attr("cy", function(d){
-            //subtract value from 450 to "grow" circles up from the bottom instead of down from the top of the SVG
-            return 450 - (d.population * 0.0005);
+       .attr("cy", function(d){
+            return y(d.population);
         });
 
  console.log(innerRect);
